@@ -145,6 +145,8 @@ cataleg2<-readxl::read_excel(conductor_codis2,col_types = "text")%>%
 Codis_Bogdan<-compar_catal(dt1=cataleg,dt2=cataleg2)%>%
   left_join(cataleg2,by="cod")
 
+#write.csv(PACIENT_599_medic,"PACIENT_599_medic.csv")
+
 
 write_xlsx(Codis_Bogdan, "Codis_Bogdan.csv")
 
