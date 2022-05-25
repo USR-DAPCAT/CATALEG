@@ -1,0 +1,191 @@
+---
+title: 'Projecte de comparacio de CATALEGS:   `r params$bd.dindex`'
+author: "Jordi Real & Rai Puig"
+website: "https://github.com/USR-DAPCAT/"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+
+
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+    fig_caption: true
+    css: logos_css/usr_styles.css
+  pdf_document: default
+  word_document: default
+
+params:
+  dir_dades_origen: "../../DADES/HTG/mostra" #"../DADES/HTG/HTG" # 
+  dir_dades_desti:  "dades"                 #"dades/poblacio"  #
+---
+
+
+&nbsp;
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"https://www.idiapjgol.org/images/logo.png\" style=\"float: right ;width: 130px;\"/>')
+     $head.prepend('<img src=\"https://avatars2.githubusercontent.com/u/57066591?s=200&v=4\" style=\"margin-left:25% ;width: 80px;\"/>')
+     $head.prepend('<img src=\"logoDAP_Cat.png\" style=\"float: left:1;width: 185px;\"/>')
+   });
+</script>
+
+
+
+<div class="watermark">DRAFT</div>
+
+
+
+
+# FASE LECTURA
+
+>> Generacio de la taula plana  
+
+```{r setup, include = FALSE}
+#rm(list=ls())
+
+library(dplyr)
+library(lubridate)   
+
+# Funcions 
+link_source<-paste0("https://github.com/jrealgatius/Stat_codis/blob/master/funcions_propies.R","?raw=T")
+devtools::source_url(link_source)
+
+conductor_codis<-here::here("Cataleg_ORIGINAL.xlsx")
+conductor_codis2<-here::here("Cataleg_PROJECTE.xlsx")
+
+
+directori_dades_origen<-params$dir_dades_origen
+
+#####################################################################################################################################
+#i)
+#Funcio compar_catal:Observa si hi ha codis de dt2(Cataleg_Projecte), que no estiguin a dt1(Cataleg_Original).
+#
+#ii)
+#Els enviem a un investigador que hi posara , el seu pertinent AGR.
+#
+#iii)
+#Un cop rebem els codis amb els seus AGR pertients, ho afegirem al dt1(Cataleg_Original).
+#
+#iv)
+#Seleccionem del dt1, aquells codis que siguin nomes pel PROJECTE, i ho tornem a enviar al investigador perque hi posi els AGR1.
+#
+#v)
+#Un cop rebut, ja tindrem el CATALEG_PROJECTE , preparat!!!
+#
+#####################################################################################################################################
+
+
+compar_catal<-function(dt1=cataleg_estandard,dt2=cataleg_nou){
+
+    #dt1=cataleg  #dt1(Catàleg_nou);  #catalaeg actual
+    #dt2=cataleg2 #dt2(catàleg_gran!) #cataleg dels PROJECTE!
+
+    K1<-dt1%>%select(cod)%>%group_by(cod)%>%dplyr::slice(1)%>%ungroup()
+    K2<-dt2%>%select(cod)%>%group_by(cod)%>%dplyr::slice(1)%>%ungroup() 
+    
+    #length(K1$cod)
+    #length(K2$cod)
+    
+    codis_falten<-K2%>%
+      anti_join(K1,by="cod")
+    
+    codis_falten
+    
+    
+    }
+
+
+```
+
+
+
+## i.Comparacio entre el Cataleg Original i el Cataleg Projecte
+
+```{r i,include=T}
+
+#####################################################################################################################################
+#i)
+#Funcio compar_catal:Observa si hi ha codis de dt2(Cataleg_Projecte), que no estiguin a dt1(Cataleg_Original).
+#
+
+
+cataleg<-readxl::read_excel(conductor_codis,col_types = "text")
+
+
+
+#####################################################################################################################################
+
+
+
+#[ el nou Projecte]# ::
+
+cataleg2<-readxl::read_excel(conductor_codis2,col_types = "text")%>% 
+  select(cod,Descripcio)%>%
+    group_by(cod)%>%dplyr::slice(1)%>%ungroup()
+
+
+
+
+
+Codis_Bogdan<-compar_catal(dt1=cataleg,dt2=cataleg2)%>%
+  left_join(cataleg2,by="cod")
+#
+
+
+
+#només es fara per aquest DOMINI!:
+
+#diagnostics
+#cmbdh_diagnostics
+#cmbdh_procediments
+#farmacs_facturats
+#farmacs_prescrits
+#
+#
+#
+
+#
+#
+#
+#
+
+```
+## ii.Els enviem a un investigador que hi posara , el seu pertinent AGR.
+
+```{r ii,include=T}
+
+
+```
+
+## iii.Un cop rebem els codis amb els seus AGR pertients, ho afegirem al dt1(Cataleg_Original).
+
+```{r iii,include=T}
+
+
+```
+## iv.Seleccionem del dt1, aquells codis que siguin nomes pel PROJECTE, i ho tornem a enviar al investigador perque hi posi els AGR1.
+```{r iv,include=T}
+
+
+```
+## v.Un cop rebut, ja tindrem el CATALEG_PROJECTE , preparat.
+
+```{r v,include=T}
+
+
+```
+
+## 5. Salvar Taula Plana
+```{r salvar}
+saveRDS(cataleg2, file=here::here(params$dir_dades_desti,"cataleg.rds"))
+
+```
+
+
+
+
+
+
