@@ -297,31 +297,19 @@ cataleg2&lt;-readxl::read_excel(conductor_codis2,col_types = &quot;text&quot;)%&
 
 Codis_Bogdan&lt;-compar_catal(dt1=cataleg,dt2=cataleg2)%&gt;%
   left_join(cataleg2,by=&quot;cod&quot;)
-#
 
 
-
-#només es fara per aquest DOMINI!:
-
-#diagnostics
-#cmbdh_diagnostics
-#cmbdh_procediments
-#farmacs_facturats
-#farmacs_prescrits
-#
-#
-#
-
-#
-#
-#
-#</code></pre>
+write.csv(Codis_Bogdan,&quot;Codis_Bogdan.csv&quot;)</code></pre>
 </div>
 <div id="ii.els-enviem-a-un-investigador-que-hi-posara-el-seu-pertinent-agr." class="section level2">
 <h2>ii.Els enviem a un investigador que hi posara , el seu pertinent AGR.</h2>
+<pre class="r"><code># ho  rebo del investigador!!!
+
+#cataleg_corregit&lt;-readxl::read_excel(conductor_codis3,col_types = &quot;text&quot;)</code></pre>
 </div>
 <div id="iii.un-cop-rebem-els-codis-amb-els-seus-agr-pertients-ho-afegirem-al-dt1cataleg_original." class="section level2">
 <h2>iii.Un cop rebem els codis amb els seus AGR pertients, ho afegirem al dt1(Cataleg_Original).</h2>
+<pre class="r"><code>#add al cataleg Original!</code></pre>
 </div>
 <div id="iv.seleccionem-del-dt1-aquells-codis-que-siguin-nomes-pel-projecte-i-ho-tornem-a-enviar-al-investigador-perque-hi-posi-els-agr1." class="section level2">
 <h2>iv.Seleccionem del dt1, aquells codis que siguin nomes pel PROJECTE, i ho tornem a enviar al investigador perque hi posi els AGR1.</h2>

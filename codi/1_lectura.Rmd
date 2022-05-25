@@ -48,6 +48,7 @@ params:
 
 library(dplyr)
 library(lubridate)   
+library(writexl)
 
 # Funcions 
 link_source<-paste0("https://github.com/jrealgatius/Stat_codis/blob/master/funcions_propies.R","?raw=T")
@@ -59,6 +60,17 @@ conductor_codis2<-here::here("Cataleg_PROJECTE.xlsx")
 
 directori_dades_origen<-params$dir_dades_origen
 
+
+# el nostre cataleg , nomes consta:
+#
+#només es fara per aquest DOMINI!:
+#
+#diagnostics
+#cmbdh_diagnostics
+#cmbdh_procediments
+#farmacs_facturats
+#farmacs_prescrits
+#
 #####################################################################################################################################
 #i)
 #Funcio compar_catal:Observa si hi ha codis de dt2(Cataleg_Projecte), que no estiguin a dt1(Cataleg_Original).
@@ -132,30 +144,27 @@ cataleg2<-readxl::read_excel(conductor_codis2,col_types = "text")%>%
 
 Codis_Bogdan<-compar_catal(dt1=cataleg,dt2=cataleg2)%>%
   left_join(cataleg2,by="cod")
-#
+
+
+write_xlsx(Codis_Bogdan, "Codis_Bogdan.csv")
 
 
 
-#només es fara per aquest DOMINI!:
 
-#diagnostics
-#cmbdh_diagnostics
-#cmbdh_procediments
-#farmacs_facturats
-#farmacs_prescrits
-#
-#
-#
 
-#
-#
-#
-#
+
+
+
 
 ```
 ## ii.Els enviem a un investigador que hi posara , el seu pertinent AGR.
 
 ```{r ii,include=T}
+
+# ho  rebo del investigador!!!
+
+#cataleg_corregit<-readxl::read_excel(conductor_codis3,col_types = "text")
+
 
 
 ```
@@ -163,6 +172,8 @@ Codis_Bogdan<-compar_catal(dt1=cataleg,dt2=cataleg2)%>%
 ## iii.Un cop rebem els codis amb els seus AGR pertients, ho afegirem al dt1(Cataleg_Original).
 
 ```{r iii,include=T}
+
+#add al cataleg Original!
 
 
 ```
