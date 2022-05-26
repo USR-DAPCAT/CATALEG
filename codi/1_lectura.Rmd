@@ -62,6 +62,14 @@ conductor_codis2<-here::here("Cataleg_PROJECTE.xlsx")
 
 directori_dades_origen<-params$dir_dades_origen
 
+#Gràcies Ray 
+
+#Aviam si em pots fer una funció que converteix-hi una columna d'un tibble (exemple valor), amb una columna de tipo character, a una columna tipo numeric. Una manera es convertir-ho a factor , després a numeric i després fer el procés invers. 
+
+#En la superfunció, quan el que s'intenta agregar son 2 taules de variables (via agregar_analitiques) que son de naturalesa diferents, peta. (Exemple en el projecte COVID, tenim una taula amb valors  numerics tipo: IMC , HB etc.. i una segona base de dades amb el resultat de la PCR: Positiu , negatiu etc... 
+
+#Fins aviat
+
 
 # el nostre cataleg , nomes consta:
 #
