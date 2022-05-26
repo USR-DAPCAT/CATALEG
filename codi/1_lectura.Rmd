@@ -112,6 +112,7 @@ compar_catal<-function(dt1=cataleg_estandard,dt2=cataleg_nou){
     }
 
 
+dades<-readxl::read_excel(conductor_codis,col_types = "text")
 
 
 # Actualitza conductor amb noves variables en dades 
@@ -121,7 +122,7 @@ ActualitzarConductor<-function(d=dades,taulavariables="VARIABLES_R3b.xlsx") {
   # taulavariables="variables_metplus_test.xlsx"
   # d=dades
   
-   taulavariables="Cataleg_ORIGINAL.xlsx"
+   taulavariables="conductor.xlsx"
    d=conductor_codis2
   
   
