@@ -268,23 +268,6 @@ ActualitzarConductor2<-function(d=dades,taulavariables="VARIABLES_R3b.xlsx",lloc
 
 
 
-d <- data.frame(char = letters[1:5], 
-                fake_char = as.character(1:5), 
-                fac = factor(1:5), 
-                char_fac = factor(letters[1:5]), 
-                num = 1:5, stringsAsFactors = FALSE)
-
-
-
-
-
-
-d$char = as.numeric(as.character(d$char))
-
-
-d$num = as.character(d$num)
-
-
 
 
 #####################################################################################################################################
@@ -298,32 +281,22 @@ cataleg<-readxl::read_excel(conductor_codis,col_types = "text")
 
 
 #####################################################################################################################################
-
-
-
+#
+#
+#
 #[ el nou Projecte]# ::
 
 cataleg2<-readxl::read_excel(conductor_codis2,col_types = "text")%>% 
   select(cod,Descripcio)%>%
     group_by(cod)%>%dplyr::slice(1)%>%ungroup()
 
-
-
-
-
 Codis_Bogdan<-compar_catal(dt1=cataleg,dt2=cataleg2)%>%
   left_join(cataleg2,by="cod")
 
-#write.csv(PACIENT_599_medic,"PACIENT_599_medic.csv")
-
-
-write_xlsx(Codis_Bogdan, "Codis_Bogdan.csv")
+writexl::write_xlsx(list(codis =Codis_Bogdan), "Codis_Bogdan.xlsx")
 
 
 
-#openxlsx::openXL(Codis_Bogdan)
-#openxlsx::saveWorkbook(Codis_Bogdan, file = Codis_Bogdan, overwrite = TRUE)
-#openxlsx::openXL(taulavariables)
 
 
 ```
@@ -335,7 +308,7 @@ write_xlsx(Codis_Bogdan, "Codis_Bogdan.csv")
 
 #cataleg_corregit1<-readxl::read_excel(conductor_codis3,col_types = "text")
 
-
+#Codis_Bogdan_C [ codi bogdan corregit!]
 
 ```
 
@@ -345,20 +318,21 @@ write_xlsx(Codis_Bogdan, "Codis_Bogdan.csv")
 
 #add al cataleg Original!
 
+# ho transformo a tibble, tant cataleg , com els Codis_Bogdan_C , poso les files de Codis_Bogdan_C  a sota cataleg!, arrange, 
+
 
 ```
 ## iv.Seleccionem del dt1, aquells codis que siguin nomes pel PROJECTE, i ho tornem a enviar al investigador perque hi posi els AGR1.
 ```{r iv,include=T}
 
-#cataleg_corregit2<-readxl::read_excel(conductor_codis4,col_types = "text")
-
+#semi join dels codis del PROJECTE NOU, i ho converteixo a Excel! i ho passa a Bogdan, perrque posi els AGR1
 
 ```
 ## v.Un cop rebut, ja tindrem el CATALEG_PROJECTE , preparat.
 
 ```{r v,include=T}
 
-#semi join
+#un cop rebut ja tindre el PROJECTE!!!!
 
 ```
 
