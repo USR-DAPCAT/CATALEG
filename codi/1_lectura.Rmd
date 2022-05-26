@@ -266,6 +266,27 @@ ActualitzarConductor2<-function(d=dades,taulavariables="VARIABLES_R3b.xlsx",lloc
 
 ```{r i,include=T}
 
+
+
+d <- data.frame(char = letters[1:5], 
+                fake_char = as.character(1:5), 
+                fac = factor(1:5), 
+                char_fac = factor(letters[1:5]), 
+                num = 1:5, stringsAsFactors = FALSE)
+
+
+
+
+
+
+d$char = as.numeric(as.character(d$char))
+
+
+d$num = as.character(d$num)
+
+
+
+
 #####################################################################################################################################
 #i)
 #Funcio compar_catal:Observa si hi ha codis de dt2(Cataleg_Projecte), que no estiguin a dt1(Cataleg_Original).
@@ -300,10 +321,9 @@ write_xlsx(Codis_Bogdan, "Codis_Bogdan.csv")
 
 
 
-
-
-
-
+#openxlsx::openXL(Codis_Bogdan)
+#openxlsx::saveWorkbook(Codis_Bogdan, file = Codis_Bogdan, overwrite = TRUE)
+#openxlsx::openXL(taulavariables)
 
 
 ```
