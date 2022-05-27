@@ -17,8 +17,8 @@ output:
   word_document: default
 
 params:
-  dir_dades_origen: "../../DADES/HTG/mostra" #"../DADES/HTG/HTG" # 
-  dir_dades_desti:  "dades"                 #"dades/poblacio"  #
+  dir_dades_origen: "../../DADES/CATALEG" 
+  dir_dades_desti:  "dades"                 
 ---
 
 
@@ -54,16 +54,21 @@ library(writexl)
 link_source<-paste0("https://github.com/jrealgatius/Stat_codis/blob/master/funcions_propies.R","?raw=T")
 devtools::source_url(link_source)
 
-conductor_codis<-here::here("Cataleg_ORIGINAL.xlsx")
-conductor_codis2<-here::here("Cataleg_PROJECTE.xlsx")
 
-conductor_codis3<-here::here("Codis_Bogdan_C.xlsx")
-
-
-#conductor_codis3
-#conductor_codis4
+#I PART::
 
 directori_dades_origen<-params$dir_dades_origen
+#BIG CATALEG,  a on xuclarem tots els codis!
+Cataleg_ORIGINAL_path<-here::here(directori_dades_origen,"Cataleg_ORIGINAL.xlsx")
+#CATALEG PROJECTES, gafarem tots els codis, del DIAGNOSTICS(Poblacio)+FARAMAC_PRESCRITS(Poblacio)+FARMACS FACTURATS(Poblacio)
+Cataleg_PROJECTE_path<-here::here("Cataleg_PROJECTE.xlsx")
+
+#II PART
+#CATALEG a on l'investigador ens ha posat els codis faltants del seu projecte
+Codis_INVEST_Corregit_path<-here::here("Codis_INVEST_C.xlsx")
+
+
+
 
 
 
@@ -117,140 +122,6 @@ compar_catal<-function(dt1=cataleg_estandard,dt2=cataleg_nou){
     }
 
 
-dades<-readxl::read_excel(conductor_codis,col_types = "text")
-
-
-# Actualitza conductor amb noves variables en dades 
-
-ActualitzarConductor<-function(d=dades,taulavariables="VARIABLES_R3b.xlsx") {
-  
-  # taulavariables="variables_metplus_test.xlsx"
-  # d=dades
-  
-   taulavariables="conductor.xlsx"
-   d=conductor_codis2
-  
-  
-  # Llegir conductor
-  variables<-readxl::read_excel(taulavariables) %>% tidyr::as_tibble()
-
-  # Si el format es xls exportar a xls cambiar de format
-  if (readxl::excel_format(taulavariables)=="xls") {
-    taulavariables<-stringr::str_replace(taulavariables,"xls","xlsx")
-    openxlsx::write.xlsx(variables,taulavariables)}
-  
-  # Guardar posició de camp i descripció
-  posicio_camp <- which(names(variables) == "camp")
-  posicio_desc <- which(names(variables) == "descripcio")
-  
-  #----------------------------------------------------------#
-  var_dades<-names(dades)%>% as_tibble() %>% select("camp"=value) %>%mutate("descripcio"=camp)
-  var_conductor<-variables["camp"]
-
-  #----------------------------------------------------------#
-  #var_dades
-  #var_conductor
-  #----------------------------------------------------------#
-  var_afegir<-var_dades %>% anti_join(var_conductor,by="camp")
-  #var_afegir
-  #----------------------------------------------------------#
-  # afegeix al final 
-  #variables2<-variables %>% bind_rows(var_afegir)
- 
-   #----------------------------------------------------------#
-  wb<-openxlsx::loadWorkbook(taulavariables)
-  n<-(openxlsx::readWorkbook(wb,sheet=1)[,1] %>% length())+2
-  n2<-colnames(variables)%>% length()
-  #----------------------------------------------------------#
-  #var0<-var_afegir%>%as.data.frame
-  var1<-var_afegir[1]
-  var2<-var_afegir[2]
-  #----------------------------------------------------------#
-  var1 <- var1[['camp']]
-  var2 <- var2[['descripcio']]
-  #----------------------------------------------------------#
-  # negStyle <- openxlsx::createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-  # posStyle <- openxlsx::createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
-  #----------------------------------------------------------#
-  openxlsx::writeData(wb, sheet=1,var1,startCol = posicio_camp,startRow = n)
-  openxlsx::writeData(wb, sheet=1,var2,startCol = posicio_desc,startRow = n)
-
-  # openxlsx::conditionalFormatting(wb, sheet=1, cols=1:(n2), rows=(n):(n+1000),rule="!=0",style =posStyle)
-  
-  #
- 
-  openxlsx::saveWorkbook(wb, file = taulavariables, overwrite = TRUE)
-  openxlsx::openXL(taulavariables)
-
-  
-}
-
-
-ActualitzarConductor2<-function(d=dades,taulavariables="VARIABLES_R3b.xlsx",lloc=0,my.vec=c(" "," ")) {
-  
-  #------------------------------------#
-  #lloc=0
-  #my.vec=c("ZZ","ZZ")
-  #taulavariables="VARIABLES_R3b.xlsx"
-  #d=dades
-  #------------------------------------#
-  
-  # Llegir conductor
-  variables<-readxl::read_excel(taulavariables) %>% tidyr::as_tibble()
-  
-  # Si el format es xls exportar a xls cambiar de format
-  if (readxl::excel_format(taulavariables)=="xls") {
-    taulavariables<-stringr::str_replace(taulavariables,"xls","xlsx")
-    openxlsx::write.xlsx(variables,taulavariables)}
-  
-  # Guardar posició de camp i descripció
-  posicio_camp <- which(names(variables) == "camp")
-  posicio_desc <- which(names(variables) == "descripcio")
-  #----------------------------------------------------------#
-  var_dades<-names(dades)%>% as_tibble() %>% select("camp"=value) %>%mutate("descripcio"=camp)
-  var_conductor<-variables["camp"]
-  #----------------------------------------------------------#
-  #var_dades
-  #var_conductor
-  #----------------------------------------------------------#
-  var_afegir<-var_dades %>% anti_join(var_conductor,by="camp")
-  #var_afegir
-  #----------------------------------------------------------#
-  # afegeix al final 
-  #----------------------------------------------------------#
-  wb<-openxlsx::loadWorkbook(taulavariables)
-  n<-(openxlsx::readWorkbook(wb,sheet=1)[,1] %>% length())+2
-  n2<-colnames(variables)%>% length()
-  #----------------------------------------------------------#
-  var1<-var_afegir[1]
-  var2<-var_afegir[2]
-  #----------------------------------------------------------#
-  var1 <- var1[['camp']]
-  var2 <- var2[['descripcio']]
-  #----------------------------------------------------------#
-  posStyle <- openxlsx::createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
-  #----------------------------------------------------------#
-  openxlsx::writeData(wb, sheet=1,var1,startCol = posicio_camp,startRow = n)
-  openxlsx::writeData(wb, sheet=1,var2,startCol = posicio_desc,startRow = n)
-  openxlsx::conditionalFormatting(wb, sheet=1, cols=1:(n2), rows=(n):(n+1000),rule="!=0",style =posStyle)
-  #----------------------------------------------------------#
-  openxlsx::saveWorkbook(wb, file = taulavariables, overwrite = TRUE)
-  variables2<-readxl::read_excel(taulavariables) %>% tidyr::as_tibble()
-  #----------------------------------------------------------# 
-  x<- rep(" ", times = n2-length(my.vec))
-  my.vec2    <- c(my.vec,x)
-  #----------------------------------------------------------#
-  new.data <- rbind(variables2[1:(lloc), ], my.vec2, variables2[(lloc+1):length(variables2[,1]),])
-  openxlsx::writeData(wb,sheet=1,new.data,startCol = 1,startRow = 1)
-  if (lloc==0) {
-    openxlsx::writeData(wb,sheet=1,variables2,startCol = 1,startRow = 1)
-  }
-  openxlsx::saveWorkbook(wb, file = taulavariables, overwrite = TRUE)
-  openxlsx::openXL(taulavariables)
-}
-
-
-
 
 
 
@@ -258,69 +129,88 @@ ActualitzarConductor2<-function(d=dades,taulavariables="VARIABLES_R3b.xlsx",lloc
 ```
 
 
+I PART
 
 ## i.Comparacio entre el Cataleg Original i el Cataleg Projecte
+
+
 
 ```{r i,include=T}
 
 #i)
-#Funcio compar_catal:Observa si hi ha codis de dt2(Cataleg_Projecte), que no estiguin a dt1(Cataleg_Original).
+#Funcio compar_catal:Observa si hi ha codis de dt2(Cataleg_Projecte), que no estiguin a dt1(Cataleg_Original)::
 
-cataleg<-readxl::read_excel(conductor_codis,col_types = "text")%>%select(domini,cod,Descripcio,agr)
+
+
+#BIG CATALEG,  a on xuclarem tots els codis!
+Cataleg_ORIGINAL<-readxl::read_excel(Cataleg_ORIGINAL_path,col_types = "text")%>%select(domini,cod,Descripcio,agr)
+
+
 
 #[ el nou Projecte]# ::
-
-cataleg2<-readxl::read_excel(conductor_codis2,col_types = "text")%>% 
+#CATALEG PROJECTES, gafarem tots els codis, del DIAGNOSTICS(Poblacio)+FARAMAC_PRESCRITS(Poblacio)+FARMACS FACTURATS(Poblacio)
+Cataleg_PROJECTE<-readxl::read_excel(Cataleg_PROJECTE_path,col_types = "text")%>% 
   select(cod,Descripcio)%>%
     group_by(cod)%>%dplyr::slice(1)%>%ungroup()
 
-Codis_Bogdan<-compar_catal(dt1=cataleg,dt2=cataleg2)%>%
+
+#Funcio que ens diu , quins codis no tenum al BIG CATALEG!::
+Codis_INVEST<-compar_catal(dt1=Cataleg_ORIGINAL,dt2=Cataleg_PROJECTE)%>%
   left_join(cataleg2,by="cod")
 
-writexl::write_xlsx(list(codis =Codis_Bogdan), "Codis_Bogdan.xlsx")
+#HO passem a EXCEL, per enviar-ho al investigador!
+writexl::write_xlsx(list(codis =Codis_INVEST), "Codis_Invest.xlsx")
+
 
 
 ```
-## ii.Els enviem a un investigador que hi posara , el seu pertinent "agr" amb el nom de "Codis_Bogdan.C.xlsx" .
+
+II PART
+
+
+## i.Els enviem a un investigador que hi posara , el seu pertinent "agr" amb el nom de "Codis_Bogdan.C.xlsx" .
 
 ```{r ii,include=T}
 
 # ho  rebo del investigador!!!
 #cataleg_corregit1<-readxl::read_excel(conductor_codis3,col_types = "text")
-#Codis_Bogdan_C [ codi bogdan corregit!]
+#Codis_C [ codi investigador corregit, amb el seu agr!]
 
 
-cataleg<-readxl::read_excel(conductor_codis,col_types = "text")%>%select(domini,cod,Descripcio,agr)
+#cataleg<-readxl::read_excel(conductor_codis,col_types = "text")%>%select(domini,cod,Descripcio,agr)
 
-cataleg_c<-readxl::read_excel(conductor_codis3,col_types = "text")%>%
-  mutate(domini="Corregit")%>%
-    select(domini,cod,Descripcio,agr)
 
-cataleg<-rbind(cataleg,cataleg_c)
+Codis_INVEST_C<-readxl::read_excel(Codis_INVEST_Corregit_path,col_types = "text")%>%
+  select(domini,cod,Descripcio,agr)
+  
 
-writexl::write_xlsx(list(codis =cataleg), "cataleg1.xlsx")
-writexl::write_xlsx(list(codis =cataleg), "Codis_Bogdan_C.xlsx")
+
+#hi afageixo tots els codis que falten corregits
+Cataleg_ORIGINAL_temp<-rbind(Cataleg_ORIGINAL,Codis_INVEST_C)
+
+writexl::write_xlsx(list(codis =Cataleg_ORIGINAL_temp), "Cataleg_ORIGINAL_temp.xlsx")
 
 
 ```
 
 
-## iii.Seleccionem del dt1, aquells codis que siguin nomes pel PROJECTE, i ho tornem a enviar al investigador perque hi posi els AGR1.
+## ii.Seleccionem del dt1, aquells codis que siguin nomes pel PROJECTE, i ho tornem a enviar al investigador perque hi posi els AGR1.
 ```{r iv,include=T}
 
 #semi join dels codis del PROJECTE NOU, i ho converteixo a Excel! i ho passa a Bogdan, perrque posi els AGR1
 
-#???
+Cataleg_PROJECTE<-Cataleg_PROJECTE%>%select(-Descripcio)
 
-cataleg_Projecte<-cataleg2 %>% left_join(cataleg,by="cod")
-writexl::write_xlsx(list(codis =cataleg_Projecte), "cataleg_Projecte.xlsx")
+Cataleg_PROJECTE_temp<-Cataleg_ORIGINAL_temp %>%right_join(Cataleg_PROJECTE,by="cod")
+
+writexl::write_xlsx(list(codis =Cataleg_PROJECTE_temp), "Cataleg_PROJECTE_temp.xlsx")
 
 ```
-## iv.Un cop rebut, ja tindrem el CATALEG_PROJECTE , preparat.
+## iii.Un cop rebut, ja tindrem el CATALEG_PROJECTE , preparat.
 
 ```{r v,include=T}
 
-#un cop rebut ja tindre el PROJECTE!!!!
+#Aquest projecte serà enviat a l'investigador per què hi posi el AGR1, PERTINENT!!!!!!
 
 ```
 
