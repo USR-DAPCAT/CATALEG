@@ -146,7 +146,6 @@ I PART
 Cataleg_ORIGINAL<-readxl::read_excel(Cataleg_ORIGINAL_path,col_types = "text")%>%select(domini,cod,Descripcio,agr)
 
 
-
 #[ el nou Projecte]# ::
 #CATALEG PROJECTES, gafarem tots els codis, del DIAGNOSTICS(Poblacio)+FARAMAC_PRESCRITS(Poblacio)+FARMACS FACTURATS(Poblacio)
 Cataleg_PROJECTE<-readxl::read_excel(Cataleg_PROJECTE_path,col_types = "text")%>% 
@@ -156,7 +155,7 @@ Cataleg_PROJECTE<-readxl::read_excel(Cataleg_PROJECTE_path,col_types = "text")%>
 
 #Funcio que ens diu , quins codis no tenum al BIG CATALEG!::
 Codis_INVEST<-compar_catal(dt1=Cataleg_ORIGINAL,dt2=Cataleg_PROJECTE)%>%
-  left_join(cataleg2,by="cod")
+  left_join(Cataleg_PROJECTE,by="cod")
 
 #HO passem a EXCEL, per enviar-ho al investigador!
 writexl::write_xlsx(list(codis =Codis_INVEST), "Codis_Invest.xlsx")
