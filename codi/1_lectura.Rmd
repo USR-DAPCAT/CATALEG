@@ -57,18 +57,15 @@ devtools::source_url(link_source)
 conductor_codis<-here::here("Cataleg_ORIGINAL.xlsx")
 conductor_codis2<-here::here("Cataleg_PROJECTE.xlsx")
 
+conductor_codis3<-here::here("Codis_Bogdan_C.xlsx")
+
+
 #conductor_codis3
 #conductor_codis4
 
 directori_dades_origen<-params$dir_dades_origen
 
-#Gràcies Ray 
 
-#Aviam si em pots fer una funció que converteix-hi una columna d'un tibble (exemple valor), amb una columna de tipo character, a una columna tipo numeric. Una manera es convertir-ho a factor , després a numeric i després fer el procés invers. 
-
-#En la superfunció, quan el que s'intenta agregar son 2 taules de variables (via agregar_analitiques) que son de naturalesa diferents, peta. (Exemple en el projecte COVID, tenim una taula amb valors  numerics tipo: IMC , HB etc.. i una segona base de dades amb el resultat de la PCR: Positiu , negatiu etc... 
-
-#Fins aviat
 
 
 # el nostre cataleg , nomes consta:
@@ -266,24 +263,11 @@ ActualitzarConductor2<-function(d=dades,taulavariables="VARIABLES_R3b.xlsx",lloc
 
 ```{r i,include=T}
 
-
-
-
-
-#####################################################################################################################################
 #i)
 #Funcio compar_catal:Observa si hi ha codis de dt2(Cataleg_Projecte), que no estiguin a dt1(Cataleg_Original).
-#
 
+cataleg<-readxl::read_excel(conductor_codis,col_types = "text")%>%select(domini,cod,Descripcio,agr)
 
-cataleg<-readxl::read_excel(conductor_codis,col_types = "text")
-
-
-
-#####################################################################################################################################
-#
-#
-#
 #[ el nou Projecte]# ::
 
 cataleg2<-readxl::read_excel(conductor_codis2,col_types = "text")%>% 
@@ -296,39 +280,43 @@ Codis_Bogdan<-compar_catal(dt1=cataleg,dt2=cataleg2)%>%
 writexl::write_xlsx(list(codis =Codis_Bogdan), "Codis_Bogdan.xlsx")
 
 
-
-
-
 ```
-## ii.Els enviem a un investigador que hi posara , el seu pertinent AGR.
+## ii.Els enviem a un investigador que hi posara , el seu pertinent "agr" amb el nom de "Codis_Bogdan.C.xlsx" .
 
 ```{r ii,include=T}
 
 # ho  rebo del investigador!!!
-
 #cataleg_corregit1<-readxl::read_excel(conductor_codis3,col_types = "text")
-
 #Codis_Bogdan_C [ codi bogdan corregit!]
 
+
+cataleg<-readxl::read_excel(conductor_codis,col_types = "text")%>%select(domini,cod,Descripcio,agr)
+
+cataleg_c<-readxl::read_excel(conductor_codis3,col_types = "text")%>%
+  mutate(domini="Corregit")%>%
+    select(domini,cod,Descripcio,agr)
+
+cataleg<-rbind(cataleg,cataleg_c)
+
+writexl::write_xlsx(list(codis =cataleg), "cataleg1.xlsx")
+writexl::write_xlsx(list(codis =cataleg), "Codis_Bogdan_C.xlsx")
+
+
 ```
 
-## iii.Un cop rebem els codis amb els seus AGR pertients, ho afegirem al dt1(Cataleg_Original).
 
-```{r iii,include=T}
-
-#add al cataleg Original!
-
-# ho transformo a tibble, tant cataleg , com els Codis_Bogdan_C , poso les files de Codis_Bogdan_C  a sota cataleg!, arrange, 
-
-
-```
-## iv.Seleccionem del dt1, aquells codis que siguin nomes pel PROJECTE, i ho tornem a enviar al investigador perque hi posi els AGR1.
+## iii.Seleccionem del dt1, aquells codis que siguin nomes pel PROJECTE, i ho tornem a enviar al investigador perque hi posi els AGR1.
 ```{r iv,include=T}
 
 #semi join dels codis del PROJECTE NOU, i ho converteixo a Excel! i ho passa a Bogdan, perrque posi els AGR1
 
+#???
+
+cataleg_Projecte<-cataleg2 %>% left_join(cataleg,by="cod")
+writexl::write_xlsx(list(codis =cataleg_Projecte), "cataleg_Projecte.xlsx")
+
 ```
-## v.Un cop rebut, ja tindrem el CATALEG_PROJECTE , preparat.
+## iv.Un cop rebut, ja tindrem el CATALEG_PROJECTE , preparat.
 
 ```{r v,include=T}
 
@@ -336,9 +324,9 @@ writexl::write_xlsx(list(codis =Codis_Bogdan), "Codis_Bogdan.xlsx")
 
 ```
 
-## 5. Salvar Taula Plana
+## v. Salvar Taula Plana
 ```{r salvar}
-saveRDS(cataleg2, file=here::here(params$dir_dades_desti,"cataleg.rds"))
+#saveRDS(cataleg2, file=here::here(params$dir_dades_desti,"cataleg.rds"))
 
 ```
 
