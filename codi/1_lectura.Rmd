@@ -107,6 +107,10 @@ compar_catal<-function(dt1=cataleg_estandard,dt2=cataleg_nou){
     #dt1=cataleg  #dt1(Catàleg_nou);  #catalaeg actual
     #dt2=cataleg2 #dt2(catàleg_gran!) #cataleg dels PROJECTE!
 
+    #dt1=Cataleg_ORIGINAL
+    #dt2=Cataleg_PROJECTE
+  
+  
     K1<-dt1%>%select(cod)%>%group_by(cod)%>%dplyr::slice(1)%>%ungroup()
     K2<-dt2%>%select(cod)%>%group_by(cod)%>%dplyr::slice(1)%>%ungroup() 
     
