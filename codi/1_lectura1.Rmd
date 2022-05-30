@@ -138,7 +138,7 @@ Codis_INVEST<-compar_catal(dt1=Cataleg_ORIGINAL,dt2=Cataleg_PROJECTE)%>%
 writexl::write_xlsx(list(codis =Codis_INVEST), "Codis_Invest.xlsx")
 
 
-kable(head(Codis_INVEST))
+kable(Codis_INVEST)
 
 
 
