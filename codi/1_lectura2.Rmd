@@ -159,11 +159,6 @@ writexl::write_xlsx(list(codis =Cataleg_PROJECTE_temp), "Cataleg_PROJECTE_temp.x
 
 ```
 
-## iv. Salvar Taula Plana
-```{r salvar}
-#saveRDS(cataleg2, file=here::here(params$dir_dades_desti,"cataleg.rds"))
-
-```
 
 
 
