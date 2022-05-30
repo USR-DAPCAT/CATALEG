@@ -96,14 +96,8 @@ compar_catal<-function(dt1=cataleg_estandard,dt2=cataleg_nou){
       anti_join(K1,by="cod")
     
     codis_falten
-    
-    
+
     }
-
-
-
-
-
 
 ```
 
@@ -134,14 +128,28 @@ Cataleg_PROJECTE<-readxl::read_excel(Cataleg_PROJECTE_path,col_types = "text")%>
 Codis_INVEST<-compar_catal(dt1=Cataleg_ORIGINAL,dt2=Cataleg_PROJECTE)%>%
   left_join(Cataleg_PROJECTE,by="cod")
 
+
+
+
+
 #HO passem a EXCEL, per enviar-ho al investigador!
 writexl::write_xlsx(list(codis =Codis_INVEST), "Codis_Invest.xlsx")
 
 
-kable(Codis_INVEST)
 
+options(knitr.table.format = "html")
 
+#Descrpcio::
 
+# falta els 10o primers... lenght 1,2,3...10
+N<-seq(1,length(Codis_INVEST$cod), by = 1)
+
+Codis_INVEST<-cbind(Codis_INVEST,N)%>%
+  tibble()%>%
+    filter(N<=300)
+#
+knitr::kable(Codis_INVEST,caption = "Els 300 primers Codis del nostre Projecte que no tenim al gran CATALEG.",label = TRUE,col.names = gsub("[.]", " ", names(Codis_INVEST)))
+#
 ```
 
 

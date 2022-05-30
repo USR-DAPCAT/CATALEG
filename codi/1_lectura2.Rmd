@@ -18,6 +18,7 @@ output:
 
 params:
   dir_dades_origen: "../../DADES/CATALEG" 
+  dir_dades_origen_ACTUALITZACIO: ../../../DADES/CATALEG/Cataleg_ORIGINAL_temp.xlsx
 ---
 
 
@@ -93,6 +94,7 @@ Codis_INVEST_Corregit_path<-here::here("Codis_INVEST_C.xlsx")
 #
 #####################################################################################################################################
 
+KK<-params$dir_dades_origen_ACTUALITZACIO
 
 ```
 
@@ -127,7 +129,8 @@ Cataleg_PROJECTE<-readxl::read_excel(Cataleg_PROJECTE_path,col_types = "text")%>
 #hi afageixo tots els codis que falten corregits
 Cataleg_ORIGINAL_temp<-rbind(Cataleg_ORIGINAL,Codis_INVEST_C)
 
-writexl::write_xlsx(list(codis =Cataleg_ORIGINAL_temp), path ="../../../DADES/CATALEG/Cataleg_ORIGINAL_temp.xlsx")
+
+writexl::write_xlsx(list(codis =Cataleg_ORIGINAL_temp), path =KK)
 
 
 #
@@ -139,7 +142,7 @@ writexl::write_xlsx(list(codis =Cataleg_ORIGINAL_temp), path ="../../../DADES/CA
 
 ```{r ii,include=T}
 
-#semi join dels codis del PROJECTE NOU, i ho converteixo a Excel! i ho passa a Bogdan, perrque posi els AGR1
+#right_join dels codis del PROJECTE NOU, i ho converteixo a Excel! i ho passa al , perrque posi els AGR1
 
 Cataleg_PROJECTE<-Cataleg_PROJECTE%>%select(-Descripcio)
 
@@ -147,16 +150,11 @@ Cataleg_PROJECTE_temp<-Cataleg_ORIGINAL_temp %>%right_join(Cataleg_PROJECTE,by="
 
 writexl::write_xlsx(list(codis =Cataleg_PROJECTE_temp), "Cataleg_PROJECTE_temp.xlsx")
 
-
-
-
-
 ```
 
 ## iii.Un cop rebut, ja tindrem el CATALEG_PROJECTE , preparat.
 
 ```{r iii,include=T}
-
 #Aquest projecte serà enviat a l'investigador per què hi posi el AGR1, PERTINENT!!!!!!
 
 ```
