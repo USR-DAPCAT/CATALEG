@@ -138,9 +138,7 @@ Codis_INVEST<-compar_catal(dt1=Cataleg_ORIGINAL,dt2=Cataleg_PROJECTE)%>%
 writexl::write_xlsx(list(codis =Codis_INVEST), "Codis_Invest.xlsx")
 
 
-descrTable(Codis_INVEST)%>% 
-  export2md(caption="Characteristics of people with complete data for macrovascular complications")
-#
+kable(head(Codis_INVEST))
 
 
 
