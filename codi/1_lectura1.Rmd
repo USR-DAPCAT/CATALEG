@@ -18,7 +18,6 @@ output:
 
 params:
   dir_dades_origen: "../../DADES/CATALEG" 
-  dir_dades_desti:  "dades"                 
 ---
 
 
@@ -39,9 +38,9 @@ params:
 
 
 
-# FASE LECTURA
+#  Aquetsa part, compararem el nostre CATALEG_PROJECTE amb el CATALEG_ORIGINAL, i ens dirà amb un Excel[Codis_Invest.xlsx] quants CODIS(cod) falten al CATALEG_ORIGINAL. 
 
->> Generacio de la taula plana  
+>> Generacio Codis_Invest.xlsx 
 
 ```{r setup, include = FALSE}
 #rm(list=ls())
@@ -63,14 +62,6 @@ Cataleg_ORIGINAL_path<-here::here(directori_dades_origen,"Cataleg_ORIGINAL.xlsx"
 #CATALEG PROJECTES, gafarem tots els codis, del DIAGNOSTICS(Poblacio)+FARAMAC_PRESCRITS(Poblacio)+FARMACS FACTURATS(Poblacio)
 Cataleg_PROJECTE_path<-here::here("Cataleg_PROJECTE.xlsx")
 
-#II PART
-#CATALEG a on l'investigador ens ha posat els codis faltants del seu projecte
-Codis_INVEST_Corregit_path<-here::here("Codis_INVEST_C.xlsx")
-
-
-
-
-
 
 
 # el nostre cataleg , nomes consta:
@@ -88,18 +79,6 @@ Codis_INVEST_Corregit_path<-here::here("Codis_INVEST_C.xlsx")
 #Funcio compar_catal:Observa si hi ha codis de dt2(Cataleg_Projecte), que no estiguin a dt1(Cataleg_Original).
 #
 #ii)
-#Els enviem a un investigador que hi posara , el seu pertinent AGR.
-#
-#iii)
-#Un cop rebem els codis amb els seus AGR pertients, ho afegirem al dt1(Cataleg_Original).
-#
-#iv)
-#Seleccionem del dt1, aquells codis que siguin nomes pel PROJECTE, i ho tornem a enviar al investigador perque hi posi els AGR1.
-#
-#v)
-#Un cop rebut, ja tindrem el CATALEG_PROJECTE , preparat!!!
-#
-#####################################################################################################################################
 
 
 compar_catal<-function(dt1=cataleg_estandard,dt2=cataleg_nou){
@@ -107,10 +86,6 @@ compar_catal<-function(dt1=cataleg_estandard,dt2=cataleg_nou){
     #dt1=cataleg  #dt1(Catàleg_nou);  #catalaeg actual
     #dt2=cataleg2 #dt2(catàleg_gran!) #cataleg dels PROJECTE!
 
-    #dt1=Cataleg_ORIGINAL
-    #dt2=Cataleg_PROJECTE
-  
-  
     K1<-dt1%>%select(cod)%>%group_by(cod)%>%dplyr::slice(1)%>%ungroup()
     K2<-dt2%>%select(cod)%>%group_by(cod)%>%dplyr::slice(1)%>%ungroup() 
     
@@ -144,8 +119,6 @@ I PART
 #i)
 #Funcio compar_catal:Observa si hi ha codis de dt2(Cataleg_Projecte), que no estiguin a dt1(Cataleg_Original)::
 
-
-
 #BIG CATALEG,  a on xuclarem tots els codis!
 Cataleg_ORIGINAL<-readxl::read_excel(Cataleg_ORIGINAL_path,col_types = "text")%>%select(domini,cod,Descripcio,agr)
 
@@ -165,63 +138,16 @@ Codis_INVEST<-compar_catal(dt1=Cataleg_ORIGINAL,dt2=Cataleg_PROJECTE)%>%
 writexl::write_xlsx(list(codis =Codis_INVEST), "Codis_Invest.xlsx")
 
 
+descrTable(Codis_INVEST)%>% 
+  export2md(caption="Characteristics of people with complete data for macrovascular complications")
+#
 
-```
-
-II PART
-
-
-## i.Els enviem a un investigador que hi posara , el seu pertinent "agr" amb el nom de "Codis_Bogdan.C.xlsx" .
-
-```{r ii,include=T}
-
-# ho  rebo del investigador!!!
-#cataleg_corregit1<-readxl::read_excel(conductor_codis3,col_types = "text")
-#Codis_C [ codi investigador corregit, amb el seu agr!]
-
-
-#cataleg<-readxl::read_excel(conductor_codis,col_types = "text")%>%select(domini,cod,Descripcio,agr)
-
-
-Codis_INVEST_C<-readxl::read_excel(Codis_INVEST_Corregit_path,col_types = "text")%>%
-  select(domini,cod,Descripcio,agr)
-  
-
-
-#hi afageixo tots els codis que falten corregits
-Cataleg_ORIGINAL_temp<-rbind(Cataleg_ORIGINAL,Codis_INVEST_C)
-
-writexl::write_xlsx(list(codis =Cataleg_ORIGINAL_temp), "Cataleg_ORIGINAL_temp.xlsx")
 
 
 ```
 
 
-## ii.Seleccionem del dt1, aquells codis que siguin nomes pel PROJECTE, i ho tornem a enviar al investigador perque hi posi els AGR1.
-```{r iv,include=T}
 
-#semi join dels codis del PROJECTE NOU, i ho converteixo a Excel! i ho passa a Bogdan, perrque posi els AGR1
-
-Cataleg_PROJECTE<-Cataleg_PROJECTE%>%select(-Descripcio)
-
-Cataleg_PROJECTE_temp<-Cataleg_ORIGINAL_temp %>%right_join(Cataleg_PROJECTE,by="cod")
-
-writexl::write_xlsx(list(codis =Cataleg_PROJECTE_temp), "Cataleg_PROJECTE_temp.xlsx")
-
-```
-## iii.Un cop rebut, ja tindrem el CATALEG_PROJECTE , preparat.
-
-```{r v,include=T}
-
-#Aquest projecte serà enviat a l'investigador per què hi posi el AGR1, PERTINENT!!!!!!
-
-```
-
-## v. Salvar Taula Plana
-```{r salvar}
-#saveRDS(cataleg2, file=here::here(params$dir_dades_desti,"cataleg.rds"))
-
-```
 
 
 

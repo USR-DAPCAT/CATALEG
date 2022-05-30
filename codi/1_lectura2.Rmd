@@ -1,0 +1,174 @@
+---
+title: 'Projecte de comparacio de CATALEGS:   `r params$bd.dindex`'
+author: "Jordi Real & Rai Puig"
+website: "https://github.com/USR-DAPCAT/"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+
+
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+    fig_caption: true
+    css: logos_css/usr_styles.css
+  pdf_document: default
+  word_document: default
+
+params:
+  dir_dades_origen: "../../DADES/CATALEG" 
+---
+
+
+&nbsp;
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"https://www.idiapjgol.org/images/logo.png\" style=\"float: right ;width: 130px;\"/>')
+     $head.prepend('<img src=\"https://avatars2.githubusercontent.com/u/57066591?s=200&v=4\" style=\"margin-left:25% ;width: 80px;\"/>')
+     $head.prepend('<img src=\"logoDAP_Cat.png\" style=\"float: left:1;width: 185px;\"/>')
+   });
+</script>
+
+
+
+<div class="watermark">DRAFT</div>
+
+
+
+
+# Aquesta II part,rebrem del investigador els codis corregits i els afegirem al CATALEG ORIGINAL [actualiutazcio CATALEG ORIGINAL], despres agafarem , nomes els codis del projecte, perque l investigador hi posi els AGR1.  
+
+>> Generacio de la taula plana  
+
+```{r setup, include = FALSE}
+#rm(list=ls())
+
+library(dplyr)
+library(lubridate)   
+library(writexl)
+
+# Funcions 
+link_source<-paste0("https://github.com/jrealgatius/Stat_codis/blob/master/funcions_propies.R","?raw=T")
+devtools::source_url(link_source)
+
+
+#I PART::
+
+directori_dades_origen<-params$dir_dades_origen
+#BIG CATALEG,  a on xuclarem tots els codis!
+Cataleg_ORIGINAL_path<-here::here(directori_dades_origen,"Cataleg_ORIGINAL.xlsx")
+#CATALEG PROJECTES, gafarem tots els codis, del DIAGNOSTICS(Poblacio)+FARAMAC_PRESCRITS(Poblacio)+FARMACS FACTURATS(Poblacio)
+Cataleg_PROJECTE_path<-here::here("Cataleg_PROJECTE.xlsx")
+
+#II PART
+#CATALEG a on l'investigador ens ha posat els codis faltants del seu projecte
+Codis_INVEST_Corregit_path<-here::here("Codis_INVEST_C.xlsx")
+
+#####################################################################################################################################
+#
+#
+#
+# el nostre cataleg , nomes consta:
+#
+#només es fara per aquest DOMINI!:
+#
+#diagnostics
+#cmbdh_diagnostics
+#cmbdh_procediments
+#farmacs_facturats
+#farmacs_prescrits
+#
+
+#
+#i)
+#Un cop rebem els codis amb els seus AGR pertients, ho afegirem al dt1(Cataleg_Original).
+#
+#ii)
+#Seleccionem del dt1, aquells codis que siguin nomes pel PROJECTE, i ho tornem a enviar al investigador perque hi posi els AGR1.
+#
+#iii)
+#Un cop rebut, ja tindrem el CATALEG_PROJECTE , preparat!!!
+#
+#####################################################################################################################################
+
+
+```
+
+II PART
+
+
+## i.Els enviem a un investigador que hi posara , el seu pertinent "agr" amb el nom de "Codis_INVEST_C.xlsx" .
+
+```{r i,include=T}
+
+# ho  rebo del investigador!!!
+#cataleg_corregit1<-readxl::read_excel(conductor_codis3,col_types = "text")
+#Codis_C [ codi investigador corregit, amb el seu agr!]
+
+
+Codis_INVEST_C<-readxl::read_excel(Codis_INVEST_Corregit_path,col_types = "text")%>%
+  select(domini,cod,Descripcio,agr)
+  
+
+#BIG CATALEG,  a on xuclarem tots els codis!
+Cataleg_ORIGINAL<-readxl::read_excel(Cataleg_ORIGINAL_path,col_types = "text")%>%select(domini,cod,Descripcio,agr)
+
+
+#[ el nou Projecte]# ::
+#CATALEG PROJECTES, gafarem tots els codis, del DIAGNOSTICS(Poblacio)+FARAMAC_PRESCRITS(Poblacio)+FARMACS FACTURATS(Poblacio)
+Cataleg_PROJECTE<-readxl::read_excel(Cataleg_PROJECTE_path,col_types = "text")%>% 
+  select(cod,Descripcio)%>%
+    group_by(cod)%>%dplyr::slice(1)%>%ungroup()
+
+
+
+#hi afageixo tots els codis que falten corregits
+Cataleg_ORIGINAL_temp<-rbind(Cataleg_ORIGINAL,Codis_INVEST_C)
+
+writexl::write_xlsx(list(codis =Cataleg_ORIGINAL_temp), path ="../../../DADES/CATALEG/Cataleg_ORIGINAL_temp.xlsx")
+
+
+#
+
+```
+
+
+## ii.Seleccionem del dt1, aquells codis que siguin nomes pel PROJECTE, i ho tornem a enviar al investigador perque hi posi els AGR1.
+
+```{r ii,include=T}
+
+#semi join dels codis del PROJECTE NOU, i ho converteixo a Excel! i ho passa a Bogdan, perrque posi els AGR1
+
+Cataleg_PROJECTE<-Cataleg_PROJECTE%>%select(-Descripcio)
+
+Cataleg_PROJECTE_temp<-Cataleg_ORIGINAL_temp %>%right_join(Cataleg_PROJECTE,by="cod")
+
+writexl::write_xlsx(list(codis =Cataleg_PROJECTE_temp), "Cataleg_PROJECTE_temp.xlsx")
+
+
+
+
+
+```
+
+## iii.Un cop rebut, ja tindrem el CATALEG_PROJECTE , preparat.
+
+```{r iii,include=T}
+
+#Aquest projecte serà enviat a l'investigador per què hi posi el AGR1, PERTINENT!!!!!!
+
+```
+
+## iv. Salvar Taula Plana
+```{r salvar}
+#saveRDS(cataleg2, file=here::here(params$dir_dades_desti,"cataleg.rds"))
+
+```
+
+
+
+
+
+
