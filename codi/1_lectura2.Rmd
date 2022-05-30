@@ -96,6 +96,9 @@ Codis_INVEST_Corregit_path<-here::here("Codis_INVEST_C.xlsx")
 
 KK<-params$dir_dades_origen_ACTUALITZACIO
 
+
+#Domini/cod/Descripcio/Agr::
+
 ```
 
 II PART
